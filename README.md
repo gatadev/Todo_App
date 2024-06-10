@@ -1,6 +1,6 @@
 # Todo_App
-# This application shows tasks added,
+# This application shows tasks added
 # Tasks completed  
-# Tasks deleted also delete tasks. 
+# Tasks deleted
 # Time when task was completed
 # send email notification about the completion
