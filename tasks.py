@@ -5,6 +5,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+from Geoloction import Geoloction
+
 # create window
 window = tkinter.Tk()
 # creating window title
@@ -19,6 +21,7 @@ smtp_port = 587
 sender_email = 'ggbemou95@gmail.com'
 sender_password = 'sibtihdiuanrgopy'
 recipient_email = 'ggbemou95@gmail.com'
+geoclass = Geoloction()
 
 def send_email(subject, body):
     try:
@@ -80,13 +83,21 @@ def show_todo_app():
             completed_task = f"{task} (Completed at {completion_time})"
             tasks_listbox.delete(selected_task_index)
             completed_tasks_listbox.insert(tkinter.END, completed_task)
-
+            geoloaction = geoclass.get_location()
             # Compose the email message
             subject = "Task Completed Notification"
-            body = f"The following task has been completed:\n\nTask: {task}\nCompletion time: {completion_time}\n\nBest regards,\nYour To-Do App"
+            body = f"""
+            The following task has been completed:
+            Task: {task}
+            Completion time:{completion_time}
+            at location {geoloaction.city}
+            Best regards,
+            Your To-Do App
+            """
+            print(body)
 
             # Send the email
-            send_email(subject, body)
+            # send_email(subject, body)
         except IndexError:
             messagebox.showwarning("Warning", "You must select a task to mark as complete.")
 
