@@ -94,10 +94,9 @@ def show_todo_app():
             Best regards,
             Your To-Do App
             """
-            print(body)
 
             # Send the email
-            # send_email(subject, body)
+            send_email(subject, body)
         except IndexError:
             messagebox.showwarning("Warning", "You must select a task to mark as complete.")
 
