@@ -48,7 +48,8 @@ def send_email(subject, body):
 def login():
     username = "Group"
     password = 'group1234'
-    if username_entry.get() == username and password_entry.get() == password:
+    hasher.store_user(username, password)
+    if hasher.check_user(username_entry.get(),password_entry.get()):
         messagebox.showinfo(title="Welcome to todo tasks", message="Welcome to todo list application")
         show_todo_app()
     else:
