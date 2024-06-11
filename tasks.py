@@ -6,6 +6,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from Geoloction import Geoloction
+from hasher import Hasher  # Import the Hasher class from the hasher module
+
+# Create an instance of the Hasher class
+hasher = Hasher()
 
 # create window
 window = tkinter.Tk()
