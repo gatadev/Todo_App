@@ -1,3 +1,4 @@
+#Added update task function
 import tkinter
 from tkinter import messagebox
 from datetime import datetime
@@ -73,6 +74,21 @@ def show_todo_app():
         else:
             messagebox.showwarning("Warning", "You must enter a task.")
 
+    def update_task():
+        try:
+            task_index = tasks_listbox.curselection()[0]
+            task = tasks_listbox.get(task_index)
+            new_task = task_entry.get()
+            if new_task:
+                tasks_listbox.delete(task_index)
+                tasks_listbox.insert(task_index, new_task)
+                tasks[task_index] = new_task
+                task_entry.delete(0, tkinter.END)
+            else:
+                messagebox.showerror("Error", "Please enter a new task description")
+        except:
+            messagebox.showerror("Error", "Please select a task to update")
+
     def delete_task():
         try:
             selected_task_index = tasks_listbox.curselection()[0]
@@ -116,6 +132,9 @@ def show_todo_app():
 
     add_task_button = tkinter.Button(task_frame, text="Add Task", width=15, command=add_task, font="Arial, 14")
     add_task_button.pack(pady=5)
+
+    update_task_button = tkinter.Button(task_frame, text="Update Task", width=15, command=update_task, font="Arial, 14")
+    update_task_button.pack(pady=5)
 
     tasks_listbox = tkinter.Listbox(task_frame, width=50, height=10, font="Arial, 14")
     tasks_listbox.pack(pady=10)
