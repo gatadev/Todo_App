@@ -1,20 +1,20 @@
 from functools import lru_cache
 import json
-from typing import Any
+from typing import Any, Optional
 from urllib import request
 from dataclasses import dataclass
 @dataclass
 class GeoData:
-    ip: str
-    city:str
-    region:str
-    country:str
-    loc:str
-    org:str
-    postal:str
-    timezone:str
-    hostname:str
-    readme:str
+    ip: Optional[str] = None
+    city:Optional[str] = "Unknown"
+    region:Optional[str] = "Unknown" 
+    country:Optional[str] = "Unknown" 
+    loc:Optional[str] = None
+    org:Optional[str] = None
+    postal:Optional[str] = None
+    timezone:Optional[str] = None
+    hostname:Optional[str] = None
+    readme:Optional[str] = None
 
 class Geoloction:
     def __init__(self) -> None:
