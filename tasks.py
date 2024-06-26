@@ -182,10 +182,11 @@ def show_todo_app():
     def delete_task():
         try:
             selected_task_index = tasks_listbox.curselection()[0]
+            task = tasks_listbox.get(selected_task_index)
             tasks_listbox.delete(selected_task_index)
             user_id = hasher.db.get_user(usersesions.get_usersession())[0]
-            task_id_in_db = selected_task_index+1
-            hasher.db.delete_task(task_id_in_db,user_id)
+            found_task = usersesions.find_task(task,user_id)
+            hasher.db.delete_task(found_task.id,user_id)
         except IndexError:
             messagebox.showwarning("Warning", "You must select a task to delete.")
 
