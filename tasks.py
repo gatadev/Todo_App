@@ -39,6 +39,12 @@ class Task:
     status:str
     user_id:str
 
+@dataclass
+class UserSettings:
+    id: int
+    user_id: int
+    recipient_email: str
+
 class UserSession(object):
      _usersession = None
      _recipient_email = ""
@@ -63,13 +69,17 @@ class UserSession(object):
 
      def find_task(self, task:str,user_id):
          return list(filter(lambda x: x.task.find(task) != -1 and x.user_id == user_id, self.task))[0]
-     def set_recipient_email(self, recipient_email):
-         self._recipient_email = recipient_email
-     def get_recipient_email(self) -> str:
-        return self._recipient_email
+     def set_recipient_email(self, user_id,recipient_email):
+         self._recipient_email = hasher.db.upsert_user_settings(user_id,recipient_email)
+     def get_recipient_email(self,user_id) -> str:
+        db_email_value =  hasher.db.get_user_settings(user_id)
+        if db_email_value:
+            self._recipient_email = db_email_value[2]
+            return self._recipient_email
+        else:
+            return None
     
 usersesions = UserSession()
-recipient_email = usersesions.get_recipient_email()
 def send_email(subject, body):
     try:
         if usersesions.get_recipient_email() == "": 
@@ -121,6 +131,8 @@ def login():
     if hasher.check_user(username_entry.get(),password_entry.get()):
         messagebox.showinfo(title="Welcome to todo tasks", message="Welcome to todo list application")
         usersesions.set_usersession(username_entry.get())
+        global recipient_email
+        recipient_email = usersesions.get_recipient_email(hasher.db.get_user(usersesions.get_usersession())[0])
         show_todo_app()
     else:
         messagebox.showerror(title="Error", message="Invalid login")
@@ -271,7 +283,7 @@ def show_setting():
     def setEmail():
         email = email_entry.get()
         if email:
-            usersesions.set_recipient_email(email)
+            usersesions.set_recipient_email(hasher.db.get_user(usersesions.get_usersession())[0],email)
             messagebox.showinfo("Success", "Email uodated successfully")
             setting_window.destroy()
         else:
@@ -280,6 +292,9 @@ def show_setting():
     tkinter.Label(setting_window, text='Settings', bg="#333333", fg="#c97c5d", font="Arial, 20").pack(pady=10)
     tkinter.Label(setting_window, text='Set Recipient Email', bg="#333333", fg="#FFFFFF", font="Arial, 14").pack(pady=5)
     email_entry = tkinter.Entry(setting_window, font="Arial, 14", bg="#FFFFFF")
+    db_email = usersesions.get_recipient_email(hasher.db.get_user(usersesions.get_usersession())[0])
+    if db_email:
+        email_entry.insert(0,db_email)
     email_entry.pack(pady=5)
     tkinter.Button(setting_window, text="Save", bg="#333333", fg="#c97c5d", font="Arial, 14", command=setEmail).pack(pady=10)  
 
