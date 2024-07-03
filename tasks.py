@@ -41,6 +41,7 @@ class Task:
 
 class UserSession(object):
      _usersession = None
+     _recipient_email = ""
      task:List = []
      def __init__(self):
         pass
@@ -62,12 +63,19 @@ class UserSession(object):
 
      def find_task(self, task:str,user_id):
          return list(filter(lambda x: x.task.find(task) != -1 and x.user_id == user_id, self.task))[0]
-
+     def set_recipient_email(self, recipient_email):
+         self._recipient_email = recipient_email
+     def get_recipient_email(self) -> str:
+        return self._recipient_email
     
 usersesions = UserSession()
-
+recipient_email = usersesions.get_recipient_email()
 def send_email(subject, body):
     try:
+        if usersesions.get_recipient_email() == "": 
+            messagebox.showerror("Error", f"Please enter a recipient email")
+            raise("Error")
+        recipient_email = usersesions.get_recipient_email()
         msg = MIMEMultipart()
         msg['From'] = sender_email
         msg['To'] = recipient_email
@@ -224,7 +232,7 @@ def show_todo_app():
             send_email(subject, body)
         except IndexError:
             messagebox.showwarning("Warning", "You must select a task to mark as complete.")
-
+    
     task_frame = tkinter.Frame(window, bg="#333333")
     task_frame.pack(pady=10)
 
@@ -251,7 +259,29 @@ def show_todo_app():
 
     delete_task_button = tkinter.Button(task_frame, text="Delete Task", width=15, command=delete_task, font="Arial, 14")
     delete_task_button.pack(pady=5)
+    settings_button = tkinter.Button(task_frame,text="Setting",width=15, command=show_setting, font="Arial, 14")
+    settings_button.pack(pady=6)
     load_users_task(usersesions.get_usersession(),tasks_listbox,completed_tasks_listbox)
+def show_setting():
+    setting_window = tkinter.Toplevel(window)
+    setting_window.title("Settings")
+    setting_window.geometry('300x250')
+    setting_window.configure(bg="#333333")
+
+    def setEmail():
+        email = email_entry.get()
+        if email:
+            usersesions.set_recipient_email(email)
+            messagebox.showinfo("Success", "Email uodated successfully")
+            setting_window.destroy()
+        else:
+            messagebox.showerror("Error", "Email cannot be empty")
+
+    tkinter.Label(setting_window, text='Settings', bg="#333333", fg="#c97c5d", font="Arial, 20").pack(pady=10)
+    tkinter.Label(setting_window, text='Set Recipient Email', bg="#333333", fg="#FFFFFF", font="Arial, 14").pack(pady=5)
+    email_entry = tkinter.Entry(setting_window, font="Arial, 14", bg="#FFFFFF")
+    email_entry.pack(pady=5)
+    tkinter.Button(setting_window, text="Save", bg="#333333", fg="#c97c5d", font="Arial, 14", command=setEmail).pack(pady=10)  
 
 # responsive layout
 frame = tkinter.Frame(bg="#333333")
