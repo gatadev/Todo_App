@@ -82,10 +82,10 @@ class UserSession(object):
 usersesions = UserSession()
 def send_email(subject, body):
     try:
-        if usersesions.get_recipient_email() == "": 
+        if usersesions.get_recipient_email(hasher.db.get_user(usersesions.get_usersession())[0]) == "": 
             messagebox.showerror("Error", f"Please enter a recipient email")
             raise("Error")
-        recipient_email = usersesions.get_recipient_email()
+        recipient_email = usersesions.get_recipient_email(hasher.db.get_user(usersesions.get_usersession())[0])
         msg = MIMEMultipart()
         msg['From'] = sender_email
         msg['To'] = recipient_email
