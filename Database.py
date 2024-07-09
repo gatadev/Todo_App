@@ -31,6 +31,16 @@ class Database:
             );
             """
         )
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS user_settings (
+                id INTEGER PRIMARY KEY,
+                user_id INTEGER UNIQUE,
+                recipient_email TEXT,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+            """
+        )
         self.connection.commit()
 
     def add_task(self, task, location, timestamp,status, user_id):
@@ -79,6 +89,24 @@ class Database:
     def delete_task(self, task_id, user_id):
         self.cursor.execute("DELETE FROM tasks WHERE id = ? AND user_id = ?", (task_id,user_id))
         self.connection.commit()
+
+    def upsert_user_settings(self, user_id, recipient_email):
+        self.cursor.execute(
+            """
+            INSERT INTO user_settings (user_id, recipient_email)
+            VALUES (?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET recipient_email = excluded.recipient_email
+            """,
+            (user_id, recipient_email)
+        )
+        self.connection.commit()
+        return self.cursor.lastrowid
+    def get_user_settings(self, user_id):
+        self.cursor.execute("SELECT * FROM user_settings WHERE user_id = ?", (user_id,))
+        settings = self.cursor.fetchone()
+        if settings:
+            return settings
+        return None
 
     def close(self):
         self.connection.close()
